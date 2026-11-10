@@ -33,13 +33,12 @@ log = get_logger("train")
 
 
 def git_commit() -> str:
-    """Current Git commit hash (+'-dirty' if uncommitted changes), or 'unknown'."""
+    """Current Git commit hash (+'-dirty' if code/params/pipeline files have uncommitted changes), or 'unknown'."""
     try:
-        sha = subprocess.check_output(["git", "rev-parse", "HEAD"],
-                                      stderr=subprocess.DEVNULL, text=True).strip()
-        dirty = subprocess.check_output(["git", "status", "--porcelain", "--", "src", "params.yaml"],
-                                        stderr=subprocess.DEVNULL, text=True).strip()
-        return sha + ("-dirty" if dirty else "")
+        sha = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True).strip()
+        clean = subprocess.call(["git", "diff", "--quiet", "HEAD", "--", "*.py", "params.yaml", "dvc.yaml"],
+                                stderr=subprocess.DEVNULL) == 0
+        return sha if clean else sha + "-dirty"
     except Exception:  # noqa: BLE001
         return "unknown"
 

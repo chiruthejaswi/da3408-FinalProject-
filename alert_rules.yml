@@ -17,10 +17,10 @@ groups:
         labels: {severity: warning}
         annotations: {summary: "p95 /predict latency above 300 ms (acceptance criterion AC-3)"}
       - alert: InputDrift
-        expr: abs(airsense_input_drift_zscore) > 3
+        expr: abs(airsense_input_drift_zscore) > 1
         for: 2m
         labels: {severity: warning}
-        annotations: {summary: "Recent inputs for {{ $labels.feature }} drifted >3 sigma from training data - consider retraining"}
+        annotations: {summary: "Recent inputs for {{ $labels.feature }} mean moved by more than 1 training std - investigate / consider retraining"}
       - alert: BackendDown
         expr: up{job="airsense-backend"} == 0
         for: 15s

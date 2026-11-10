@@ -1,0 +1,14 @@
+{
+  "selected": "random_forest",
+  "run_id": "ab437d8778064fa5abbabbada142ab56",
+  "git_commit": "cdbdd7bc6445d4e0650a297249f9d4ba811c774a",
+  "accuracy": 0.9576,
+  "macro_f1": 0.9644,
+  "weighted_f1": 0.9577,
+  "recall_Good": 0.9377,
+  "recall_Satisfactory": 0.9597,
+  "recall_Moderate": 0.9636,
+  "recall_Poor": 0.95,
+  "recall_Very_Poor": 0.9741,
+  "recall_Severe": 0.96
+}

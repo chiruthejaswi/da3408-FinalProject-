@@ -1,0 +1,17 @@
+{
+  "engine": "ray.data",
+  "rows_in": 18000,
+  "rows_train": 16420,
+  "rows_test": 1580,
+  "num_cpus": 2,
+  "stage_seconds": {
+    "fit_stats": 0.058,
+    "ray_startup": 9.258,
+    "ray_transform": 4.513,
+    "write": 1.858
+  },
+  "total_seconds": 15.686,
+  "throughput_rows_per_sec_transform": 3988.6,
+  "throughput_rows_per_sec_end_to_end": 1147.5,
+  "status": "success"
+}

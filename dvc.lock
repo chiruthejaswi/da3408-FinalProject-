@@ -1,0 +1,141 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: python ingest.py
+    deps:
+    - path: common.py
+      hash: md5
+      md5: a36dcbec0ed2455d9fca6b6d81fd0e75
+      size: 3667
+    - path: ingest.py
+      hash: md5
+      md5: 0ba9d32e582f0277e763e4cae649da08
+      size: 4498
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/city_day.csv
+          processed_dir: data/processed
+          synthetic_rows_per_city: 1800
+          seed: 42
+    outs:
+    - path: data/raw/city_day.csv
+      hash: md5
+      md5: da4436d901904b470be5500137962efb
+      size: 1200094
+    - path: metrics/data_quality.json
+      hash: md5
+      md5: e220468677c7ec035a2070e2b06151af
+      size: 401
+  preprocess:
+    cmd: python preprocess.py
+    deps:
+    - path: common.py
+      hash: md5
+      md5: a36dcbec0ed2455d9fca6b6d81fd0e75
+      size: 3667
+    - path: data/raw/city_day.csv
+      hash: md5
+      md5: da4436d901904b470be5500137962efb
+      size: 1200094
+    - path: preprocess.py
+      hash: md5
+      md5: 37dc686af63288f1ab6d63855c946df1
+      size: 4064
+    params:
+      params.yaml:
+        preprocess:
+          pollutants:
+          - PM2.5
+          - PM10
+          - NO2
+          - SO2
+          - CO
+          - O3
+          test_cutoff_date: '2019-07-01'
+          clip_quantile: 0.999
+          ray_num_cpus: 2
+          ray_batch_size: 2048
+    outs:
+    - path: data/processed/stats.json
+      hash: md5
+      md5: ac3a771e997372d19608833d814c6a0b
+      size: 1999
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 84c672aa9b22e8a695ce98c85c24b1d9
+      size: 189068
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 7f9ed817e90f4317b49c8bf801b8a79a
+      size: 1966258
+    - path: metrics/pipeline_metrics.json
+      hash: md5
+      md5: d15870c87e7f3854e95b9a0adf5894b6
+      size: 375
+  train:
+    cmd: python train.py
+    deps:
+    - path: common.py
+      hash: md5
+      md5: a36dcbec0ed2455d9fca6b6d81fd0e75
+      size: 3667
+    - path: data/processed/stats.json
+      hash: md5
+      md5: ac3a771e997372d19608833d814c6a0b
+      size: 1999
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 84c672aa9b22e8a695ce98c85c24b1d9
+      size: 189068
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 7f9ed817e90f4317b49c8bf801b8a79a
+      size: 1966258
+    - path: train.py
+      hash: md5
+      md5: 3a133042a8e5a8db2129c5439fe4cac7
+      size: 9755
+    params:
+      params.yaml:
+        train:
+          experiment_name: airsense
+          seed: 42
+          val_fraction: 0.15
+          logreg:
+            C: 1.0
+            max_iter: 2000
+          random_forest:
+            n_estimators: 100
+            max_depth: 14
+            min_samples_leaf: 3
+          hist_gb:
+            max_iter: 200
+            learning_rate: 0.1
+            max_depth: 8
+    outs:
+    - path: metrics/classification_report.txt
+      hash: md5
+      md5: a58a53fe9087929cc9ff51c245431202
+      size: 542
+    - path: metrics/confusion_matrix.png
+      hash: md5
+      md5: 7ae59270065960cc9f10461826b10c41
+      size: 37742
+    - path: metrics/feature_importance.csv
+      hash: md5
+      md5: 75ac95c8d6a8574b5d0a0d2c03bd7ee2
+      size: 250
+    - path: metrics/train_metrics.json
+      hash: md5
+      md5: f77136ab47300e804e3276ae85de0733
+      size: 375
+    - path: models/airsense_model
+      hash: md5
+      md5: 700b021c2a05e073e859f59b82476ce8.dir
+      size: 12855678
+      nfiles: 7
+    - path: models/model_meta.json
+      hash: md5
+      md5: 71884807d917077e04d7500c063744b8
+      size: 3694

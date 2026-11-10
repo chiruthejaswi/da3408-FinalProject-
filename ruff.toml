@@ -1,0 +1,6 @@
+# PEP 8 subset enforced on all Python source. Exploratory notebooks are excluded on purpose.
+line-length = 130
+extend-exclude = ["*.ipynb"]
+
+[lint]
+select = ["E", "F"]

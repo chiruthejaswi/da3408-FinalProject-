@@ -1,0 +1,24 @@
+{
+  "rows": 18000,
+  "cities": 10,
+  "null_pct": {
+    "PM2.5": 6.07,
+    "PM10": 5.74,
+    "NO2": 6.02,
+    "SO2": 6.19,
+    "CO": 5.62,
+    "O3": 5.91
+  },
+  "unlabelled_rows": 0,
+  "negative_values": 0,
+  "class_counts": {
+    "Moderate": 6256,
+    "Satisfactory": 4742,
+    "Poor": 2205,
+    "Good": 2162,
+    "Very Poor": 2032,
+    "Severe": 603
+  },
+  "source": "synthetic",
+  "seconds": 0.343
+}
