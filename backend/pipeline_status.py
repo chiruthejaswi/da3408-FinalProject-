@@ -1,6 +1,7 @@
 """Collect pipeline information (DVC DAG, run history, metrics, MLflow runs)."""
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -50,6 +51,10 @@ def read_history(metrics_dir: str, limit: int = 50) -> list:
 
 def mlflow_runs(tracking_uri: str, experiment: str, limit: int = 20) -> list:
     """Recent MLflow runs; returns [] if the tracking server is unreachable."""
+    # Fail fast: MLflow's default is several retries with exponential backoff (minutes), which
+    # would freeze the Pipeline page whenever the tracking server is down.
+    os.environ.setdefault("MLFLOW_HTTP_REQUEST_MAX_RETRIES", "0")
+    os.environ.setdefault("MLFLOW_HTTP_REQUEST_TIMEOUT", "5")
     try:
         import mlflow
         client = mlflow.MlflowClient(tracking_uri=tracking_uri)

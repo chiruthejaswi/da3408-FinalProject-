@@ -120,8 +120,9 @@ IDs are embedded in the test function names (`test_tcNN_...`, `test_acNN_...`) a
 | Input validation / foolproof | TC-19..24, TC-37, TC-40, AC-05 |
 | Batch upload | TC-29..33, TC-45 |
 | Observability | TC-34, TC-45 |
+| Pipeline status / console | TC-49..53 |
 | Resilience (model missing, service down) | TC-39, TC-41, TC-44 |
 | Loose coupling / configurability | TC-42, AC-04 |
-| Pipeline code | TC-01..10, TC-46..48 |
+| Pipeline code | TC-01..10, TC-46..48, TC-54 |
 | Model quality | AC-1..2 |
 | Performance | AC-3 |

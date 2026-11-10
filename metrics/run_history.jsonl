@@ -1,3 +1,3 @@
-{"stage": "ingest", "started_at": "2026-11-03T05:32:24.595125+00:00", "status": "success", "seconds": 0.346}
-{"stage": "preprocess", "started_at": "2026-11-03T05:32:29.649806+00:00", "status": "success", "seconds": 15.689}
-{"stage": "train", "started_at": "2026-11-03T05:32:50.040748+00:00", "status": "success", "seconds": 26.754}
+{"stage": "ingest", "started_at": "2026-11-03T05:49:09.682640+00:00", "status": "success", "seconds": 0.291}
+{"stage": "preprocess", "started_at": "2026-11-03T05:49:10.851034+00:00", "status": "success", "seconds": 9.428}
+{"stage": "train", "started_at": "2026-11-03T05:49:23.231831+00:00", "status": "success", "seconds": 21.685}

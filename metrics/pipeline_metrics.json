@@ -5,13 +5,13 @@
   "rows_test": 1580,
   "num_cpus": 2,
   "stage_seconds": {
-    "fit_stats": 0.058,
-    "ray_startup": 9.258,
-    "ray_transform": 4.513,
-    "write": 1.858
+    "fit_stats": 0.049,
+    "ray_startup": 4.444,
+    "ray_transform": 3.148,
+    "write": 1.783
   },
-  "total_seconds": 15.686,
-  "throughput_rows_per_sec_transform": 3988.6,
-  "throughput_rows_per_sec_end_to_end": 1147.5,
+  "total_seconds": 9.425,
+  "throughput_rows_per_sec_transform": 5717.0,
+  "throughput_rows_per_sec_end_to_end": 1909.8,
   "status": "success"
 }

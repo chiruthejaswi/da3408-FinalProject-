@@ -5,6 +5,7 @@ and are shown on the UI's Pipeline page.
 """
 import json
 import time
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -55,8 +56,10 @@ def main() -> None:
     caps = {pol: float(train_part[pol].quantile(p["clip_quantile"])) for pol in POLLUTANTS}
     t_stats = time.time()
 
+    # Workers must be able to import `common`, whatever directory we were launched from.
+    project_dir = str(Path(__file__).resolve().parent)
     ray.init(num_cpus=p["ray_num_cpus"], include_dashboard=False, ignore_reinit_error=True,
-             logging_level="ERROR")
+             logging_level="ERROR", runtime_env={"env_vars": {"PYTHONPATH": project_dir}})
     t_ray = time.time()
     ds = ray.data.from_pandas(raw)
     ds = ds.map_batches(make_transform(medians, caps), batch_format="pandas",
