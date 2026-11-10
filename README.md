@@ -40,7 +40,7 @@ All four are saved **with outputs**, so they render on GitHub without running an
 ## Step 3: Run the tests
 
 ```
-python -m pytest                   # 61 tests
+python -m pytest                   # 67 tests
 python make_test_report.py         # tests + coverage + acceptance check -> docs/TEST_REPORT.md
 ```
 
@@ -104,7 +104,7 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 | `frontend/` | Streamlit: `app.py`, `api_client.py`, `ui_metrics.py`, `run.py`, `user_manual.md`, `Dockerfile` |
 | `docker-compose.yml`, `Dockerfile.pipeline`, `mlflow_server/` | Containers |
 | `prometheus.yml`, `alert_rules.yml`, `gen_dashboard.py`, `grafana/` | Monitoring (5 s scrape, 5 alert rules, 16-panel provisioned dashboard) |
-| `tests/` | 61 tests: unit, API, UI (Streamlit AppTest), acceptance |
+| `tests/` | 67 tests (59 distinct cases): unit, API, UI (Streamlit AppTest), acceptance |
 | `make_test_report.py`, `make_diagram.py`, `ci.sh` | Test report generator, architecture diagram generator, local CI (`lint -> dvc repro -> tests`) |
 | `docs/` | Architecture diagram + explanation, HLD, LLD (endpoint specs), test plan, test report, user manual, DVC DAG |
 | `data/`, `models/`, `metrics/` | DVC-managed pipeline outputs |

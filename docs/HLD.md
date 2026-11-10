@@ -7,7 +7,7 @@ Non-technical users want to know *how bad the air is in their city and what to d
 |---|---|
 | Accurate on *future* data | Macro-F1 ≥ 0.80 on a later-in-time test set (**achieved 0.964**) |
 | No class ignored (Severe is rare) | Every class recall ≥ 0.70 (**min 0.938**) |
-| Responsive | p95 `/predict` < 300 ms (**≈ 80 ms** measured through the test client) |
+| Responsive | p95 `/predict` < 300 ms (**≈ 30-80 ms** across runs, measured through the test client) |
 | Foolproof | Malformed input never yields a 5xx |
 | Operable | Pipeline runs, failures, throughput, drift and latency all visible in UIs |
 | Reproducible | Any model traceable to a Git commit hash + MLflow run ID + dataset hash |

@@ -1,7 +1,7 @@
 {
   "selected": "random_forest",
-  "run_id": "a27758cb7ffe4962889bd090475baa8f",
-  "git_commit": "51473c4671bf4f0252460969f5501ef9958e8712",
+  "run_id": "ae9ed8e483984f90aac854825f0b799f",
+  "git_commit": "652925e7dc77b4512687e6138b1c5829e790b007",
   "accuracy": 0.9576,
   "macro_f1": 0.9644,
   "weighted_f1": 0.9577,
