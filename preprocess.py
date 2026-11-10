@@ -41,7 +41,7 @@ def main() -> None:
     cfg = load_params()
     d, p = cfg["data"], cfg["preprocess"]
     t0 = time.time()
-    raw = pd.read_csv(d["raw_path"], parse_dates=["Date"])
+    raw = pd.read_csv(d["interim_path"], parse_dates=["Date"])
     raw = raw.dropna(subset=["AQI_Bucket"]).drop_duplicates(["City", "Date"])
     n_rows = len(raw)
 

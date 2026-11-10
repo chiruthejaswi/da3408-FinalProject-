@@ -1,13 +1,13 @@
 stages:
   ingest:
     cmd: python ingest.py
-    deps: [ingest.py, common.py]
+    deps: [ingest.py, common.py, data/raw]     # data/raw holds the optional real city_day.csv (input only)
     params: [data]
-    outs: [data/raw/city_day.csv]
+    outs: [data/interim/city_day.csv]
     metrics: [metrics/data_quality.json: {cache: false}]
   preprocess:
     cmd: python preprocess.py
-    deps: [preprocess.py, common.py, data/raw/city_day.csv]
+    deps: [preprocess.py, common.py, data/interim/city_day.csv]
     params: [preprocess]
     outs: [data/processed/train.csv, data/processed/test.csv, data/processed/stats.json]
     metrics: [metrics/pipeline_metrics.json: {cache: false}]

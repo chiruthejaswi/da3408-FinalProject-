@@ -126,7 +126,8 @@ Shared code between training and serving is limited to `common.py` (single defin
 ## 8. Pipeline interfaces (files)
 | Artifact | Format | Producer → consumer |
 |---|---|---|
-| `data/raw/city_day.csv` | CSV: `City, Date, PM2.5, PM10, NO2, SO2, CO, O3, ..., AQI_Bucket` | user/ingest → preprocess |
+| `data/raw/city_day.csv` (optional) | Real Kaggle CSV: `City, Date, PM2.5, PM10, NO2, SO2, CO, O3, ..., AQI_Bucket`. **Input only**, never modified | user → ingest |
+| `data/interim/city_day.csv` | Validated data (the real file if present, else synthetic) | ingest → preprocess |
 | `data/processed/{train,test}.csv` | raw columns + `month, pm_ratio, nox_so2, label` | preprocess → train |
 | `data/processed/stats.json` | `{medians{pollutant{city,__global__}}, caps{pollutant}}` | preprocess → train → backend (via meta) |
 | `models/airsense_model/` | MLflow sklearn flavour (cloudpickle) | train → backend |

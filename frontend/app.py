@@ -281,7 +281,7 @@ def page_pipeline() -> None:
         st.write("Validation macro-F1 per candidate (used for model selection):")
         st.bar_chart(pd.Series(info["candidate_val_macro_f1"]))
         if info.get("data_source") == "synthetic":
-            st.warning("This model was trained on SYNTHETIC demo data. Replace data/raw/city_day.csv "
+            st.warning("This model was trained on SYNTHETIC demo data. Put the real city_day.csv in data/raw/ "
                        "with the real dataset and run `dvc repro`.")
 
 

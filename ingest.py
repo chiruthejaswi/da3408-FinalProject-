@@ -1,9 +1,8 @@
 """Stage 1 - Ingest & validate raw data.
 
-Uses the real Kaggle `city_day.csv` if present at params.data.raw_path.
-Otherwise generates a clearly-labelled SYNTHETIC dataset with the same schema
-so the whole pipeline is runnable offline. Replace it with the real file and
-run `dvc repro` - no code changes needed.
+Uses the real Kaggle `city_day.csv` if present at params.data.raw_path (input only, never modified).
+Otherwise generates a clearly-labelled SYNTHETIC dataset with the same schema so the whole
+pipeline is runnable offline. Drop the real file in data/raw/ and run `dvc repro` - no code changes.
 """
 import json
 import time
@@ -52,7 +51,7 @@ def make_synthetic(rows_per_city: int, seed: int) -> pd.DataFrame:
     """Generate realistic seasonal, log-normal pollutant data with gaps."""
     rng = np.random.default_rng(seed)
     dates = pd.date_range("2015-01-01", periods=rows_per_city, freq="D")
-    season = 1 + 0.45 * np.cos(2 * np.pi * (dates.dayofyear.values - 15) / 365)
+    season = 1 + 0.45 * np.cos(2 * np.pi * (dates.day_of_year.values - 15) / 365)
     frames = []
     for city, prof in CITY_PROFILE.items():
         data = {"City": city, "Date": dates}
@@ -88,21 +87,25 @@ def validate(df: pd.DataFrame) -> dict:
 
 
 def main() -> None:
-    """Entry point for the DVC `ingest` stage."""
+    """Entry point for the DVC `ingest` stage.
+
+    Reads the user's real CSV if present (never modified); otherwise generates synthetic data in memory.
+    Either way the validated result goes to params.data.interim_path and its provenance is recorded.
+    """
     params = load_params()["data"]
     start = time.time()
-    raw = Path(params["raw_path"])
+    raw, interim = Path(params["raw_path"]), Path(params["interim_path"])
     if raw.exists():
-        log.info("Using real dataset at %s", raw)
+        log.info("Using REAL dataset at %s", raw)
         df = pd.read_csv(raw, parse_dates=["Date"])
         source = "real"
     else:
-        log.warning("Real CSV not found - generating SYNTHETIC data")
+        log.warning("No real CSV at %s - generating SYNTHETIC demo data", raw)
         df = make_synthetic(params["synthetic_rows_per_city"], params["seed"])
-        ensure_dir(str(raw.parent))
-        df.to_csv(raw, index=False)
         source = "synthetic"
     report = validate(df)
+    ensure_dir(str(interim.parent))
+    df.to_csv(interim, index=False)
     report.update(source=source, seconds=round(time.time() - start, 3))
     ensure_dir("metrics")
     with open("metrics/data_quality.json", "w", encoding="utf-8") as fh:

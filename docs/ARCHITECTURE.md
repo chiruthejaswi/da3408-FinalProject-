@@ -28,7 +28,7 @@
 ### 4. Training / data (DVC pipeline; Ray inside stage 2)
 | Stage | What it does | Outputs |
 |---|---|---|
-| **ingest** | Loads `city_day.csv` (or generates a labelled synthetic stand-in), validates schema and quality | `data/raw/city_day.csv`, `metrics/data_quality.json` |
+| **ingest** | Reads the user's real `data/raw/city_day.csv` if present (never modified), else generates a labelled synthetic stand-in; validates schema and quality | `data/interim/city_day.csv`, `metrics/data_quality.json` |
 | **preprocess** | **Ray Data** `map_batches`: negatives→missing, per-city median imputation, outlier clipping, feature engineering, **time-based** train/test split. Statistics are fitted on the training period only | `data/processed/*`, `metrics/pipeline_metrics.json` (throughput) |
 | **train** | Trains LogReg / RandomForest / HistGradientBoosting, selects on a time-ordered validation slice, refits the winner, evaluates **once** on the later test period, exports the model | `models/airsense_model/` (MLflow format), `models/model_meta.json`, metrics, plots |
 

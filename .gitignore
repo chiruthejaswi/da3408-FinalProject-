@@ -9,3 +9,4 @@ mlruns/
 mlartifacts/
 logs/
 .coverage
+data/raw/*.csv

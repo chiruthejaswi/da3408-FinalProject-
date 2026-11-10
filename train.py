@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
@@ -93,6 +94,24 @@ def plot_confusion(y, pred, path: str) -> None:
     plt.close(fig)
 
 
+def check_local_experiment(name: str, tracking_uri: str) -> None:
+    """Fail with a clear message if a local MLflow store was created in a different folder/machine.
+
+    mlflow.db remembers ABSOLUTE artifact paths; copying the project elsewhere leaves them dangling.
+    """
+    if not tracking_uri.startswith(("sqlite:", "file:")):
+        return
+    exp = mlflow.get_experiment_by_name(name)
+    if exp is None:
+        return
+    loc = exp.artifact_location.replace("file://", "")
+    if loc.startswith("/") and not Path(loc).resolve().is_relative_to(Path.cwd().resolve()):
+        raise RuntimeError(
+            f"MLflow experiment '{name}' stores artifacts in '{loc}', which is outside this project "
+            "(mlflow.db was created elsewhere). Delete mlflow.db and the mlruns/ folder and re-run; "
+            "they are regenerated automatically.")
+
+
 def main() -> None:
     """Entry point for the DVC `train` stage."""
     cfg = load_params()
@@ -105,7 +124,9 @@ def main() -> None:
     sub, val = train[train["Date"] < val_cut], train[train["Date"] >= val_cut]
     log.info("train_sub=%d val=%d test=%d", len(sub), len(val), len(test))
 
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")
+    mlflow.set_tracking_uri(tracking_uri)
+    check_local_experiment(t["experiment_name"], tracking_uri)
     mlflow.set_experiment(t["experiment_name"])
     mlflow.sklearn.autolog(log_models=False, log_datasets=False, silent=True)
     commit, data_hash = git_commit(), file_md5(f"{d['processed_dir']}/train.csv")

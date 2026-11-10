@@ -9,7 +9,7 @@ Streamlit :8501 --REST (API_URL)--> FastAPI :8000 --> model (MLflow format)
 Prometheus :9090 -------------------> Grafana :3000       dvc repro: ingest -> preprocess (Ray) -> train (MLflow :5000)
 ```
 
-> **Read this first: data.** The included model is trained on **synthetic data** with the same schema as the Kaggle `city_day.csv` (no internet was available when this was built). The UI shows a warning banner. For your submission, download the real dataset (*Air Quality Data in India 2015-2020*, Kaggle) and run Step 4 below. Everything re-runs unchanged.
+> **Read this first: data.** The included model is trained on **synthetic data** with the same schema as the Kaggle `city_day.csv` (no internet was available when this was built). The UI shows a warning banner. For your submission, download the real dataset (*Air Quality Data in India 2015-2020*, Kaggle), copy `city_day.csv` into `data/raw/` and run `dvc repro` (Step 4). Everything re-runs unchanged. The real file is an **input only**: the pipeline never overwrites or deletes it.
 
 ## Prerequisites
 
@@ -47,12 +47,14 @@ python make_test_report.py         # tests + coverage + acceptance check -> docs
 ## Step 4: Run the pipeline (data engineering + training)
 
 ```
-cp /path/to/city_day.csv data/raw/city_day.csv     # real data (optional; synthetic is generated otherwise)
-dvc repro                                          # ingest -> preprocess (Ray) -> train (MLflow)
-dvc dag                                            # print the pipeline DAG
+cp ~/Downloads/archive/city_day.csv data/raw/city_day.csv   # real data (optional; synthetic is generated otherwise)
+rm -rf mlflow.db mlruns                                    # only if they exist from another machine (see Troubleshooting)
+dvc repro                                                  # ingest -> preprocess (Ray) -> train (MLflow); re-runs because data/raw changed
+cat metrics/data_quality.json | head -3                    # must show "source": "real"
+dvc dag                                                    # print the pipeline DAG
 ```
 
-Outputs: `data/processed/`, `models/airsense_model/`, `models/model_meta.json`, `metrics/*.json`. Check `metrics/data_quality.json` for `"source": "real"`. MLflow runs are stored in `mlflow.db` (view with `mlflow ui --backend-store-uri sqlite:///mlflow.db`). Each run is tagged with the Git commit and dataset hash; reproduce a model with `git checkout <commit> && dvc repro`.
+Outputs: `data/interim/` (validated data), `data/processed/`, `models/airsense_model/`, `models/model_meta.json`, `metrics/*.json`. Check `metrics/data_quality.json` for `"source": "real"`. MLflow runs are stored in `mlflow.db` (view with `mlflow ui --backend-store-uri sqlite:///mlflow.db`). Each run is tagged with the Git commit and dataset hash; reproduce a model with `git checkout <commit> && dvc repro`.
 
 ## Step 5: Start the backend
 
@@ -124,6 +126,16 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 | Experiment tracking beyond autolog | `train.py` (tags, val/test metrics, per-class recall, plots, importance, stats, data hash) |
 | Prometheus + Grafana, all components | `backend/metrics.py`, `frontend/ui_metrics.py`, `prometheus.yml`, `alert_rules.yml`, `grafana/` |
 | MLflow model, MLproject, FastAPI, Docker, Compose | `train.py`, `MLproject`, `backend/`, `docker-compose.yml` |
+
+## Troubleshooting
+
+| Symptom | Cause / fix |
+|---|---|
+| `"source": "synthetic"` after copying the CSV | The file is not at `data/raw/city_day.csv` (check the name and folder: run from the project root, so the destination is `data/raw/...`, not `AirSense/data/raw/...`). |
+| `PermissionError: '/home/...'` or *"MLflow experiment ... stores artifacts in ... outside this project"* from `train.py` | `mlflow.db` was created on another machine/folder and remembers absolute paths. `rm -rf mlflow.db mlruns` and re-run `dvc repro`; both are regenerated. |
+| `dvc status` says outputs are *not in cache* | `dvc commit -f` (the zip ships without DVC's cache). |
+| `ModuleNotFoundError: common` inside a Ray worker | Run `python preprocess.py` / `dvc repro` from the project root (workers are given the project path automatically). |
+| A test such as TC-14/TC-15 fails on real data | Those use fixed example readings; check the model output, then adjust the test or investigate. Do not lower the acceptance thresholds to pass. |
 
 ## Notes and limitations
 

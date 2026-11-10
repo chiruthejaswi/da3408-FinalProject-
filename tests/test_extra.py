@@ -82,3 +82,45 @@ def test_tc54_pipeline_end_to_end_on_tiny_data(tmp_path, monkeypatch):
     assert (tmp_path / "metrics" / "pipeline_metrics.json").exists()
     model = mlflow.sklearn.load_model(str(tmp_path / "models" / "airsense_model"))
     assert hasattr(model, "predict_proba")
+
+
+def test_tc55_foreign_mlflow_store_gives_clear_error(tmp_path, monkeypatch):
+    """An mlflow.db whose artifacts point outside the project fails with a helpful message, not a PermissionError."""
+    import mlflow
+    import train
+    uri = f"sqlite:///{tmp_path}/foreign.db"
+    previous = mlflow.get_tracking_uri()
+    try:
+        mlflow.set_tracking_uri(uri)
+        mlflow.create_experiment("airsense", artifact_location="/somewhere/else/mlruns/1")
+        with pytest.raises(RuntimeError, match="Delete mlflow.db"):
+            train.check_local_experiment("airsense", uri)
+        assert train.check_local_experiment("airsense", "http://mlflow:5000") is None  # server URIs are not checked
+    finally:
+        mlflow.set_tracking_uri(previous)
+
+
+def test_tc56_ingest_labels_source_correctly_and_never_touches_raw(tmp_path, monkeypatch):
+    """A user CSV in data/raw is used and labelled 'real' and left untouched; without it data is 'synthetic'."""
+    import pandas as pd
+    import ingest
+    from common import POLLUTANTS
+    params = yaml.safe_load((ROOT / "params.yaml").read_text())
+    params["data"]["synthetic_rows_per_city"] = 40
+    (tmp_path / "params.yaml").write_text(yaml.safe_dump(params))
+    monkeypatch.chdir(tmp_path)
+    ingest.main()  # no real file yet
+    assert json.loads(Path("metrics/data_quality.json").read_text())["source"] == "synthetic"
+    real = pd.DataFrame({"City": ["Delhi"] * 3, "Date": ["2020-01-01", "2020-01-02", "2020-01-03"],
+                         **{p: [10.0, 20.0, 30.0] for p in POLLUTANTS}, "AQI_Bucket": ["Good", "Good", "Satisfactory"]})
+    Path("data/raw").mkdir(parents=True, exist_ok=True)
+    real.to_csv("data/raw/city_day.csv", index=False)
+    before = Path("data/raw/city_day.csv").read_bytes()
+    ingest.main()
+    rep = json.loads(Path("metrics/data_quality.json").read_text())
+    assert rep["source"] == "real" and rep["rows"] == 3 and rep["cities"] == 1
+    assert Path("data/raw/city_day.csv").read_bytes() == before            # input never modified
+    assert len(pd.read_csv("data/interim/city_day.csv")) == 3                # pipeline sees the real rows
+    Path("data/raw/city_day.csv").unlink()
+    ingest.main()                                                          # back to synthetic: must NOT stay 'real'
+    assert json.loads(Path("metrics/data_quality.json").read_text())["source"] == "synthetic"

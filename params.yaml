@@ -1,6 +1,7 @@
 # Single source of truth for pipeline parameters (tracked by DVC).
 data:
-  raw_path: data/raw/city_day.csv
+  raw_path: data/raw/city_day.csv          # OPTIONAL real Kaggle file (input only, never overwritten)
+  interim_path: data/interim/city_day.csv  # validated data the pipeline uses (real if present, else synthetic)
   processed_dir: data/processed
   synthetic_rows_per_city: 1800     # used only if the real CSV is absent
   seed: 42
