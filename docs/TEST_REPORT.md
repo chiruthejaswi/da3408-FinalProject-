@@ -1,17 +1,17 @@
 # AirSense - Test Report
 
-_Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
+_Generated 2026-11-07 07:37 UTC by `make_test_report.py`_
 
 ## 1. Summary
 
 | Metric | Value |
 |---|---|
-| Total test cases | **67** |
-| Passed | **67** |
+| Total test cases | **69** |
+| Passed | **69** |
 | Failed | **0** |
 | Skipped | 0 |
-| Line coverage | 89.6% |
-| Duration | 36.2 s |
+| Line coverage | 90.1% |
+| Duration | 36.6 s |
 
 ## 2. Acceptance criteria
 
@@ -19,10 +19,10 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 |---|---|---|---|
 | AC-1 | Held-out macro-F1 >= 0.80 | 0.9644 | MET |
 | AC-2 | Every class recall >= 0.70 | min = 0.9377 | MET |
-| AC-3 | p95 /predict latency < 300 ms | 31.44 ms (p50 20.12 ms, n=100) | MET |
+| AC-3 | p95 /predict latency < 300 ms | 20.86 ms (p50 19.4 ms, n=100) | MET |
 | AC-4 | Serving features == training features | see test AC-04 | MET |
 | AC-5 | No 5xx on malformed input | see test AC-05 | MET |
-| AC-6 | Line coverage of all project code >= 70% | 89.6% | MET |
+| AC-6 | Line coverage of all project code >= 70% | 90.1% | MET |
 
 **Overall: ACCEPTED - all criteria met**
 
@@ -32,13 +32,13 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 |---|---|---|---|---|
 | AC-01 | `test_ac1_macro_f1_at_least_080` | AC-1: held-out (future) macro-F1 >= 0.80. | PASS | 0.00 |
 | AC-02 | `test_ac2_every_class_recall_at_least_070` | AC-2: no class (incl. rare Severe) has recall below 0.70. | PASS | 0.00 |
-| AC-03 | `test_ac3_p95_latency_under_300ms` | AC-3: p95 /predict latency < 300 ms over 100 requests. | PASS | 3.32 |
+| AC-03 | `test_ac3_p95_latency_under_300ms` | AC-3: p95 /predict latency < 300 ms over 100 requests. | PASS | 3.11 |
 | AC-04 | `test_ac4_model_matches_training_feature_set` | AC-4: serving feature list equals the training feature list. | PASS | 0.01 |
-| AC-05 | `test_ac5_no_5xx_on_garbage_inputs` | AC-5: fuzzed bodies never produce a 5xx. | PASS | 0.04 |
+| AC-05 | `test_ac5_no_5xx_on_garbage_inputs` | AC-5: fuzzed bodies never produce a 5xx. | PASS | 0.02 |
 | TC-11 | `test_tc11_health` | /health reports the model as loaded. | PASS | 0.01 |
 | TC-12 | `test_tc12_cities` | /cities lists supported cities. | PASS | 0.01 |
-| TC-13 | `test_tc13_predict_response_shape` | /predict returns category, confidence, probabilities and advice. | PASS | 0.04 |
-| TC-14 | `test_tc14_clean_air_is_good` | Very low readings -> Good. | PASS | 0.03 |
+| TC-13 | `test_tc13_predict_response_shape` | /predict returns category, confidence, probabilities and advice. | PASS | 0.02 |
+| TC-14 | `test_tc14_clean_air_is_good` | Very low readings -> Good. | PASS | 0.02 |
 | TC-15 | `test_tc15_heavy_pollution_is_severe` | Extreme readings -> Severe. | PASS | 0.02 |
 | TC-16 | `test_tc16_ordering_is_monotonic` | Higher PM2.5 never yields a cleaner category. | PASS | 0.10 |
 | TC-17 | `test_tc17_missing_readings_are_imputed` | Only two readings given -> the other four are imputed and reported. | PASS | 0.02 |
@@ -54,7 +54,7 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 | TC-24 | `test_tc24_empty_body_rejected` | Empty JSON body -> 422, never a 500. | PASS | 0.01 |
 | TC-25 | `test_tc25_low_confidence_flag_type` | low_confidence is a boolean consistent with the confidence value. | PASS | 0.02 |
 | TC-26 | `test_tc26_model_info` | /model/info exposes provenance (run id, commit, metrics). | PASS | 0.01 |
-| TC-27 | `test_tc27_pipeline_status` | /pipeline/status returns a DAG with the three stages and a summary. | PASS | 1.27 |
+| TC-27 | `test_tc27_pipeline_status` | /pipeline/status returns a DAG with the three stages and a summary. | PASS | 1.17 |
 | TC-28 | `test_tc28_template_csv` | Template CSV has the expected header. | PASS | 0.01 |
 | TC-29 | `test_tc29_batch_happy_path` | Template file predicts every row. | PASS | 0.06 |
 | TC-30 | `test_tc30_batch_partial_failure` | Bad rows are reported by row number; good rows still succeed. | PASS | 0.03 |
@@ -68,8 +68,10 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 | TC-50 | `test_tc50_missing_pipeline_files_degrade_gracefully` | Missing history/dvc.yaml give empty results instead of errors. | PASS | 0.00 |
 | TC-51 | `test_tc51_unreachable_mlflow_returns_empty_list` | If MLflow cannot be reached the run table is simply empty. | PASS | 0.10 |
 | TC-52 | `test_tc52_corrupt_history_lines_are_skipped` | A half-written line in run_history.jsonl does not break the console. | PASS | 0.00 |
-| TC-53 | `test_tc53_pipeline_page_renders_with_real_status` | The Pipeline page renders all five tabs from the real /pipeline/status and /model/info payloads. | PASS | 2.25 |
-| TC-54 | `test_tc54_pipeline_end_to_end_on_tiny_data` | ingest -> Ray preprocess -> train all run on a tiny dataset and export a loadable model. | PASS | 21.84 |
+| TC-53 | `test_tc53_pipeline_page_renders_with_real_status` | The Pipeline page renders all five tabs from the real /pipeline/status and /model/info payloads. | PASS | 2.79 |
+| TC-54 | `test_tc54_pipeline_end_to_end_on_tiny_data` | ingest -> Ray preprocess -> train all run on a tiny dataset and export a loadable model. | PASS | 20.61 |
+| TC-55 | `test_tc55_foreign_mlflow_store_gives_clear_error` | An mlflow.db whose artifacts point outside the project fails with a helpful message, not a PermissionError. | PASS | 1.13 |
+| TC-56 | `test_tc56_ingest_labels_source_correctly_and_never_touches_raw` | A user CSV in data/raw is used and labelled 'real' and left untouched; without it data is 'synthetic'. | PASS | 0.09 |
 | TC-01 | `test_tc01_sub_index_band_boundaries` | PM2.5 of 30 is the top of 'Good' (AQI 50); 60 is top of 'Satisfactory' (100). | PASS | 0.00 |
 | TC-02 | `test_tc02_sub_index_missing_is_nan` | A missing reading gives NaN, not an exception. | PASS | 0.00 |
 | TC-03 | `test_tc03_bucket_mapping[25-Good]` | Every CPCB band maps to the right category. | PASS | 0.00 |
@@ -78,7 +80,7 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 | TC-03 | `test_tc03_bucket_mapping[250-Poor]` | Every CPCB band maps to the right category. | PASS | 0.00 |
 | TC-03 | `test_tc03_bucket_mapping[350-Very Poor]` | Every CPCB band maps to the right category. | PASS | 0.00 |
 | TC-03 | `test_tc03_bucket_mapping[450-Severe]` | Every CPCB band maps to the right category. | PASS | 0.00 |
-| TC-04 | `test_tc04_synthetic_schema_and_classes` | Synthetic data has the required schema and all six classes. | PASS | 0.10 |
+| TC-04 | `test_tc04_synthetic_schema_and_classes` | Synthetic data has the required schema and all six classes. | PASS | 0.11 |
 | TC-05 | `test_tc05_validate_reports_quality` | validate() returns row/city counts and null percentages. | PASS | 0.03 |
 | TC-06 | `test_tc06_validate_rejects_missing_column` | A file without pollutant columns fails loudly. | PASS | 0.00 |
 | TC-07 | `test_tc07_validate_rejects_empty` | An empty dataset fails loudly. | PASS | 0.00 |
@@ -88,12 +90,12 @@ _Generated 2026-11-03 21:17 UTC by `make_test_report.py`_
 | TC-46 | `test_tc46_preprocess_transform_imputes_and_clips` | preprocess.make_transform fills blanks with city medians, nulls negatives and clips outliers. | PASS | 0.02 |
 | TC-47 | `test_tc47_train_evaluate_returns_per_class_recall` | train.evaluate reports accuracy, macro-F1 and one recall per class. | PASS | 0.02 |
 | TC-48 | `test_tc48_train_candidates_and_git_hash` | Three candidate models are defined; git_commit() always returns a string. | PASS | 0.01 |
-| TC-35 | `test_tc35_predict_page_renders` | Predict page shows title, city dropdown and 6 reading inputs. | PASS | 0.85 |
-| TC-36 | `test_tc36_example_button_fills_form` | Clicking an example fills city and readings. | PASS | 0.82 |
-| TC-37 | `test_tc37_too_few_readings_warns` | Predict with 0 readings -> friendly warning, no API call. | PASS | 0.61 |
-| TC-38 | `test_tc38_successful_prediction_shown` | Two readings -> result card with category and confidence. | PASS | 0.95 |
-| TC-39 | `test_tc39_service_down_message` | Backend unreachable -> readable error, no stack trace. | PASS | 0.72 |
-| TC-40 | `test_tc40_api_validation_error_listed` | 422 from the API is shown with field-level details. | PASS | 0.87 |
+| TC-35 | `test_tc35_predict_page_renders` | Predict page shows title, city dropdown and 6 reading inputs. | PASS | 0.77 |
+| TC-36 | `test_tc36_example_button_fills_form` | Clicking an example fills city and readings. | PASS | 0.79 |
+| TC-37 | `test_tc37_too_few_readings_warns` | Predict with 0 readings -> friendly warning, no API call. | PASS | 0.80 |
+| TC-38 | `test_tc38_successful_prediction_shown` | Two readings -> result card with category and confidence. | PASS | 0.92 |
+| TC-39 | `test_tc39_service_down_message` | Backend unreachable -> readable error, no stack trace. | PASS | 0.83 |
+| TC-40 | `test_tc40_api_validation_error_listed` | 422 from the API is shown with field-level details. | PASS | 0.77 |
 | TC-41 | `test_tc41_api_client_unavailable_maps_exception` | Connection errors become ApiUnavailable. | PASS | 0.00 |
 | TC-42 | `test_tc42_api_url_is_configurable` | API_URL env var controls the backend address (loose coupling). | PASS | 0.00 |
 | TC-43 | `test_tc43_example_skips_unknown_city` | An example whose city the model lacks keeps the current city but fills readings. | PASS | 0.80 |

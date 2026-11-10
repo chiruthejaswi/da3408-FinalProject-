@@ -7,25 +7,31 @@ stages:
       hash: md5
       md5: a36dcbec0ed2455d9fca6b6d81fd0e75
       size: 3667
+    - path: data/raw
+      hash: md5
+      md5: eb1ef1b3fdc54f8362ffe497ce4a928f.dir
+      size: 649
+      nfiles: 2
     - path: ingest.py
       hash: md5
-      md5: 0ba9d32e582f0277e763e4cae649da08
-      size: 4498
+      md5: f830427e4c0ca3ed48fe33697eb1ae03
+      size: 4784
     params:
       params.yaml:
         data:
           raw_path: data/raw/city_day.csv
+          interim_path: data/interim/city_day.csv
           processed_dir: data/processed
           synthetic_rows_per_city: 1800
           seed: 42
     outs:
-    - path: data/raw/city_day.csv
+    - path: data/interim/city_day.csv
       hash: md5
       md5: da4436d901904b470be5500137962efb
       size: 1200094
     - path: metrics/data_quality.json
       hash: md5
-      md5: a56b9f376997f90d529b352231db6f56
+      md5: 60582e7749de392aaa5464107b889cf8
       size: 401
   preprocess:
     cmd: python preprocess.py
@@ -34,14 +40,14 @@ stages:
       hash: md5
       md5: a36dcbec0ed2455d9fca6b6d81fd0e75
       size: 3667
-    - path: data/raw/city_day.csv
+    - path: data/interim/city_day.csv
       hash: md5
       md5: da4436d901904b470be5500137962efb
       size: 1200094
     - path: preprocess.py
       hash: md5
-      md5: 04000cb67c09bda0675e342e0ff984c6
-      size: 4288
+      md5: d7e7f877eafaf4fe9e3d12902ff9f296
+      size: 4292
     params:
       params.yaml:
         preprocess:
@@ -71,8 +77,8 @@ stages:
       size: 1966258
     - path: metrics/pipeline_metrics.json
       hash: md5
-      md5: cde74c7f7dee18454dde0de1c74d282d
-      size: 374
+      md5: 265509f83a6a1dbd30c18d1668874de9
+      size: 372
   train:
     cmd: python train.py
     deps:
@@ -94,8 +100,8 @@ stages:
       size: 1966258
     - path: train.py
       hash: md5
-      md5: 96e880b66b3f59ac688e1e1d4e7c25cf
-      size: 9733
+      md5: 609c093b0643b2cfd7897c0f2c6743f7
+      size: 10716
     params:
       params.yaml:
         train:
@@ -128,14 +134,14 @@ stages:
       size: 250
     - path: metrics/train_metrics.json
       hash: md5
-      md5: 250c8a2b90924290f705666295176ad8
+      md5: 9fed41876496afe7fb4f1439e908b28c
       size: 375
     - path: models/airsense_model
       hash: md5
-      md5: 257935f3f7eedc0dcd345002049f86b9.dir
+      md5: 5b2a9d37d2933079f4fac61ef849ca62.dir
       size: 12855678
       nfiles: 7
     - path: models/model_meta.json
       hash: md5
-      md5: 6491001accc1d91b637b31dc55c23cb6
+      md5: df5064d5b37ed4b4511c75e34c9446c3
       size: 3694
