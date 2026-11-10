@@ -1,17 +1,17 @@
 {
   "engine": "ray.data",
-  "rows_in": 18000,
-  "rows_train": 16420,
-  "rows_test": 1580,
+  "rows_in": 24850,
+  "rows_train": 16645,
+  "rows_test": 8205,
   "num_cpus": 2,
   "stage_seconds": {
-    "fit_stats": 0.044,
-    "ray_startup": 4.069,
-    "ray_transform": 4.102,
-    "write": 1.485
+    "fit_stats": 0.074,
+    "ray_startup": 9.069,
+    "ray_transform": 7.962,
+    "write": 2.222
   },
-  "total_seconds": 9.7,
-  "throughput_rows_per_sec_transform": 4388.4,
-  "throughput_rows_per_sec_end_to_end": 1855.8,
+  "total_seconds": 19.326,
+  "throughput_rows_per_sec_transform": 3121.2,
+  "throughput_rows_per_sec_end_to_end": 1285.8,
   "status": "success"
 }

@@ -26,7 +26,8 @@ def test_tc13_predict_response_shape(client, valid_payload):
 
 def test_tc14_clean_air_is_good(client):
     """Very low readings -> Good."""
-    r = client.post("/predict", json={"city": "Aizawl", "pm25": 8, "pm10": 20, "no2": 8,
+    city = client.get("/cities").json()["cities"][0]  # any trained city: clean readings must be Good
+    r = client.post("/predict", json={"city": city, "pm25": 8, "pm10": 20, "no2": 8,
                                       "so2": 4, "co": 0.2, "o3": 20, "date": "2026-07-01"})
     assert r.json()["category"] == "Good"
 

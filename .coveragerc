@@ -5,5 +5,6 @@ omit =
     make_diagram.py
     make_test_report.py
     gen_dashboard.py
+    diagnose*.py
     frontend/run.py
     .venv/*

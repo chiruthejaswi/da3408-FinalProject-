@@ -1,14 +1,14 @@
 {
   "selected": "random_forest",
-  "run_id": "a7a010613af3491bb0a5fd9fba1b181c",
-  "git_commit": "a12c4086a37352d437f84bf7593c5d4730869851",
-  "accuracy": 0.9576,
-  "macro_f1": 0.9644,
-  "weighted_f1": 0.9577,
-  "recall_Good": 0.9377,
-  "recall_Satisfactory": 0.9597,
-  "recall_Moderate": 0.9636,
-  "recall_Poor": 0.95,
-  "recall_Very_Poor": 0.9741,
-  "recall_Severe": 0.96
+  "run_id": "634b38429f4c4ef899a47fa6abe3ee5f",
+  "git_commit": "0c9fef357e519a461a7065546c1587830a078820",
+  "accuracy": 0.7859,
+  "macro_f1": 0.7696,
+  "weighted_f1": 0.7856,
+  "recall_Good": 0.6861,
+  "recall_Satisfactory": 0.8434,
+  "recall_Moderate": 0.7521,
+  "recall_Poor": 0.7256,
+  "recall_Very_Poor": 0.7626,
+  "recall_Severe": 0.8333
 }

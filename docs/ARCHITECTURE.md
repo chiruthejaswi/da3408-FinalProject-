@@ -23,7 +23,7 @@
 | **Prometheus metrics** | Request count/latency, errors by type, predictions per class, confidence, raw-input histograms, **drift z-score**, model info. |
 
 ### 3. Monitoring
-**Prometheus** scrapes backend (:8000/metrics) and frontend (:8001) every 5 s and evaluates 5 alert rules (model not loaded, 5xx-class errors, p95 latency > 300 ms, input drift > 1 training std, backend down). **Grafana** auto-provisions a 16-panel dashboard refreshing every 5 s (near-real-time).
+**Prometheus** scrapes backend (:8000/metrics) and frontend (:8001) every 5 s and evaluates 5 alert rules (model not loaded, 5xx-class errors, p95 latency > 300 ms, input drift > 0.5 training std, backend down). **Grafana** auto-provisions a 16-panel dashboard refreshing every 5 s (near-real-time).
 
 ### 4. Training / data (DVC pipeline; Ray inside stage 2)
 | Stage | What it does | Outputs |

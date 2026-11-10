@@ -1,0 +1,6 @@
+{
+  "baseline_macro_f1": 0.6756,
+  "baseline_accuracy": 0.7132,
+  "model_macro_f1": 0.7696,
+  "rows": 8205
+}

@@ -9,9 +9,9 @@ stages:
       size: 3667
     - path: data/raw
       hash: md5
-      md5: eb1ef1b3fdc54f8362ffe497ce4a928f.dir
-      size: 649
-      nfiles: 2
+      md5: 07fd24e9cce4d18cd82fa18f9ed21b2d.dir
+      size: 2574705
+      nfiles: 3
     - path: ingest.py
       hash: md5
       md5: f830427e4c0ca3ed48fe33697eb1ae03
@@ -27,12 +27,12 @@ stages:
     outs:
     - path: data/interim/city_day.csv
       hash: md5
-      md5: da4436d901904b470be5500137962efb
-      size: 1200094
+      md5: 4e241e96983482d9692f8a677403c1b3
+      size: 2574056
     - path: metrics/data_quality.json
       hash: md5
-      md5: 60582e7749de392aaa5464107b889cf8
-      size: 401
+      md5: 209c3b3dc1ca09a310a3547cfb4d1e5e
+      size: 405
   preprocess:
     cmd: python preprocess.py
     deps:
@@ -42,8 +42,8 @@ stages:
       size: 3667
     - path: data/interim/city_day.csv
       hash: md5
-      md5: da4436d901904b470be5500137962efb
-      size: 1200094
+      md5: 4e241e96983482d9692f8a677403c1b3
+      size: 2574056
     - path: preprocess.py
       hash: md5
       md5: d7e7f877eafaf4fe9e3d12902ff9f296
@@ -65,20 +65,20 @@ stages:
     outs:
     - path: data/processed/stats.json
       hash: md5
-      md5: ac3a771e997372d19608833d814c6a0b
-      size: 1999
+      md5: 031a48843e1b4a370989add65f43e271
+      size: 3699
     - path: data/processed/test.csv
       hash: md5
-      md5: 84c672aa9b22e8a695ce98c85c24b1d9
-      size: 189068
+      md5: a278fcb166f508ca571d9be218f935e2
+      size: 1218758
     - path: data/processed/train.csv
       hash: md5
-      md5: 7f9ed817e90f4317b49c8bf801b8a79a
-      size: 1966258
+      md5: eef31a8dd53ba52ffe0b65e4180c6f03
+      size: 2475698
     - path: metrics/pipeline_metrics.json
       hash: md5
-      md5: 265509f83a6a1dbd30c18d1668874de9
-      size: 372
+      md5: 660b34c8747e658c7f24e78b3635d424
+      size: 375
   train:
     cmd: python train.py
     deps:
@@ -88,16 +88,16 @@ stages:
       size: 3667
     - path: data/processed/stats.json
       hash: md5
-      md5: ac3a771e997372d19608833d814c6a0b
-      size: 1999
+      md5: 031a48843e1b4a370989add65f43e271
+      size: 3699
     - path: data/processed/test.csv
       hash: md5
-      md5: 84c672aa9b22e8a695ce98c85c24b1d9
-      size: 189068
+      md5: a278fcb166f508ca571d9be218f935e2
+      size: 1218758
     - path: data/processed/train.csv
       hash: md5
-      md5: 7f9ed817e90f4317b49c8bf801b8a79a
-      size: 1966258
+      md5: eef31a8dd53ba52ffe0b65e4180c6f03
+      size: 2475698
     - path: train.py
       hash: md5
       md5: 609c093b0643b2cfd7897c0f2c6743f7
@@ -122,26 +122,26 @@ stages:
     outs:
     - path: metrics/classification_report.txt
       hash: md5
-      md5: a58a53fe9087929cc9ff51c245431202
+      md5: afe98cbcaf87e9749e2a245f4ea8e377
       size: 542
     - path: metrics/confusion_matrix.png
       hash: md5
-      md5: 7ae59270065960cc9f10461826b10c41
-      size: 37742
+      md5: 149f4e98a0362a878c19fea08d1c2cb2
+      size: 39696
     - path: metrics/feature_importance.csv
       hash: md5
-      md5: 75ac95c8d6a8574b5d0a0d2c03bd7ee2
-      size: 250
+      md5: 0608cf24c922d8d8c560c288ab67d9dd
+      size: 256
     - path: metrics/train_metrics.json
       hash: md5
-      md5: 9fed41876496afe7fb4f1439e908b28c
-      size: 375
+      md5: 6b42cc216525496c66935dc7d4a844e3
+      size: 379
     - path: models/airsense_model
       hash: md5
-      md5: 5b2a9d37d2933079f4fac61ef849ca62.dir
-      size: 12855678
+      md5: aab057dc977cb8b85f77de47285acb99.dir
+      size: 23680723
       nfiles: 7
     - path: models/model_meta.json
       hash: md5
-      md5: df5064d5b37ed4b4511c75e34c9446c3
-      size: 3694
+      md5: 3d59b068afe7baecae2a9a6c691822bc
+      size: 5574
