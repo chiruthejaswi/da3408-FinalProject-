@@ -1,0 +1,28 @@
+groups:
+  - name: airsense
+    rules:
+      - alert: ModelNotLoaded
+        expr: airsense_model_loaded == 0 or absent(airsense_model_loaded)
+        for: 30s
+        labels: {severity: critical}
+        annotations: {summary: "Backend has no model loaded"}
+      - alert: HighErrorRate
+        expr: sum(rate(airsense_errors_total{type=~"unexpected"}[1m])) > 0
+        for: 30s
+        labels: {severity: critical}
+        annotations: {summary: "Unexpected (5xx-class) errors in the API"}
+      - alert: SlowPredictions
+        expr: histogram_quantile(0.95, sum(rate(airsense_http_request_seconds_bucket{path="/predict"}[2m])) by (le)) > 0.3
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "p95 /predict latency above 300 ms (acceptance criterion AC-3)"}
+      - alert: InputDrift
+        expr: abs(airsense_input_drift_zscore) > 3
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Recent inputs for {{ $labels.feature }} drifted >3 sigma from training data - consider retraining"}
+      - alert: BackendDown
+        expr: up{job="airsense-backend"} == 0
+        for: 15s
+        labels: {severity: critical}
+        annotations: {summary: "Backend scrape target is down"}

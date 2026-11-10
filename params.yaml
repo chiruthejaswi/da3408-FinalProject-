@@ -1,0 +1,19 @@
+# Single source of truth for pipeline parameters (tracked by DVC).
+data:
+  raw_path: data/raw/city_day.csv
+  processed_dir: data/processed
+  synthetic_rows_per_city: 1800     # used only if the real CSV is absent
+  seed: 42
+preprocess:
+  pollutants: [PM2.5, PM10, NO2, SO2, CO, O3]
+  test_cutoff_date: "2019-07-01"    # time-based split: train < cutoff <= test
+  clip_quantile: 0.999
+  ray_num_cpus: 2
+  ray_batch_size: 2048
+train:
+  experiment_name: airsense
+  seed: 42
+  val_fraction: 0.15            # last 15% of TRAIN dates = validation (model selection)
+  logreg: {C: 1.0, max_iter: 2000}
+  random_forest: {n_estimators: 100, max_depth: 14, min_samples_leaf: 3}
+  hist_gb: {max_iter: 200, learning_rate: 0.1, max_depth: 8}

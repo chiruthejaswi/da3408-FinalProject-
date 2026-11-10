@@ -1,0 +1,20 @@
+{
+  "Good": {"color": "#00B050", "headline": "Air quality is good",
+    "advice": "Minimal impact. Enjoy outdoor activities as usual.",
+    "sensitive": "No special precautions needed."},
+  "Satisfactory": {"color": "#92D050", "headline": "Air quality is satisfactory",
+    "advice": "Minor breathing discomfort is possible for very sensitive people.",
+    "sensitive": "People with lung or heart disease may prefer lighter outdoor exertion."},
+  "Moderate": {"color": "#FFC000", "headline": "Air quality is moderate",
+    "advice": "May cause breathing discomfort to people with lung disease, asthma or heart disease, children and older adults.",
+    "sensitive": "Limit prolonged outdoor exertion; keep rescue medication handy."},
+  "Poor": {"color": "#ED7D31", "headline": "Air quality is poor",
+    "advice": "Breathing discomfort on prolonged exposure. Reduce long outdoor activity.",
+    "sensitive": "Stay indoors where possible; consider an N95 mask outdoors."},
+  "Very Poor": {"color": "#FF0000", "headline": "Air quality is very poor",
+    "advice": "Respiratory illness on prolonged exposure. Avoid outdoor exercise.",
+    "sensitive": "Stay indoors, keep windows closed, use an air purifier if available."},
+  "Severe": {"color": "#C00000", "headline": "Air quality is severe",
+    "advice": "Serious health effects even for healthy people. Avoid all outdoor activity.",
+    "sensitive": "Remain indoors. Seek medical help if you have breathing difficulty."}
+}

@@ -1,0 +1,10 @@
+# Pipeline / training environment (used by MLproject)
+ray[data]==2.59.0
+pandas
+numpy
+pyarrow
+pyyaml
+scikit-learn==1.8.0
+mlflow==3.17.2
+matplotlib
+dvc

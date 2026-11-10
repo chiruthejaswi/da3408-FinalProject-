@@ -1,0 +1,14 @@
+name: airsense
+
+# Identical dev/test environment: conda.yaml pins Python + libs.
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "dvc repro"
+  ingest:
+    command: "python ingest.py"
+  preprocess:
+    command: "python preprocess.py"
+  train:
+    command: "python train.py"

@@ -1,0 +1,9 @@
+[run]
+source = .
+omit =
+    tests/*
+    make_diagram.py
+    make_test_report.py
+    gen_dashboard.py
+    frontend/run.py
+    .venv/*

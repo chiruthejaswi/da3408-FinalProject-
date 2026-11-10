@@ -1,0 +1,68 @@
+# AirSense stack. Frontend and backend are SEPARATE services that only talk over REST.
+#   docker compose up --build            -> app + monitoring
+#   docker compose --profile train run --rm pipeline   -> run `dvc repro` in a container
+services:
+  mlflow:
+    build: ./mlflow_server
+    ports: ["5000:5000"]
+    volumes: ["mlflow-data:/mlflow-data"]
+    restart: unless-stopped
+
+  backend:
+    build: {context: ., dockerfile: backend/Dockerfile}
+    ports: ["8000:8000"]
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_UI_URL: http://localhost:5000
+      GRAFANA_URL: http://localhost:3000
+    volumes:          # read-only model + pipeline outputs produced by `dvc repro`
+      - ./models:/app/models:ro
+      - ./metrics:/app/metrics:ro
+      - ./dvc.yaml:/app/dvc.yaml:ro
+    depends_on: [mlflow]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports: ["8501:8501"]
+    environment:
+      API_URL: http://backend:8000       # the ONLY coupling to the backend
+    depends_on:
+      backend: {condition: service_healthy}
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports: ["9090:9090"]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+    depends_on: [backend]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    ports: ["3000:3000"]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"      # demo: read-only dashboards without login
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on: [prometheus]
+    restart: unless-stopped
+
+  pipeline:                 # optional, run on demand (profile "train")
+    build: {context: ., dockerfile: Dockerfile.pipeline}
+    profiles: ["train"]
+    working_dir: /work
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes: [".:/work"]
+    depends_on: [mlflow]
+
+volumes:
+  mlflow-data:
+  grafana-data:

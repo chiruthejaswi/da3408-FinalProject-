@@ -1,0 +1,20 @@
+stages:
+  ingest:
+    cmd: python ingest.py
+    deps: [ingest.py, common.py]
+    params: [data]
+    outs: [data/raw/city_day.csv]
+    metrics: [metrics/data_quality.json: {cache: false}]
+  preprocess:
+    cmd: python preprocess.py
+    deps: [preprocess.py, common.py, data/raw/city_day.csv]
+    params: [preprocess]
+    outs: [data/processed/train.csv, data/processed/test.csv, data/processed/stats.json]
+    metrics: [metrics/pipeline_metrics.json: {cache: false}]
+  train:
+    cmd: python train.py
+    deps: [train.py, common.py, data/processed/train.csv, data/processed/test.csv, data/processed/stats.json]
+    params: [train]
+    outs: [models/airsense_model, models/model_meta.json, metrics/confusion_matrix.png,
+           metrics/feature_importance.csv, metrics/classification_report.txt]
+    metrics: [metrics/train_metrics.json: {cache: false}]
