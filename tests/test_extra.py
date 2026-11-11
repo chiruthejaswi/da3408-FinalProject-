@@ -124,3 +124,12 @@ def test_tc56_ingest_labels_source_correctly_and_never_touches_raw(tmp_path, mon
     Path("data/raw/city_day.csv").unlink()
     ingest.main()                                                          # back to synthetic: must NOT stay 'real'
     assert json.loads(Path("metrics/data_quality.json").read_text())["source"] == "synthetic"
+
+
+def test_tc58_dashboard_panels_avoid_misleading_states():
+    """Error-rate panel falls back to 0 when there are no errors; count panels use a neutral colour, not alarm red."""
+    dash = json.loads((ROOT / "grafana" / "dashboards" / "airsense.json").read_text())
+    panels = {p["title"]: p for p in dash["panels"]}
+    assert "or vector(0)" in panels["Error rate (4xx+5xx share)"]["targets"][0]["expr"]
+    for title in ("Predictions served", "Requests / sec (backend)"):
+        assert panels[title]["fieldConfig"]["defaults"]["color"]["mode"] == "fixed"

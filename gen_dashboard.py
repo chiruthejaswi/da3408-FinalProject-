@@ -5,25 +5,33 @@ DS = {"type": "prometheus", "uid": "prometheus"}
 _id = [0]
 
 
-def panel(title, exprs, kind="timeseries", x=0, y=0, w=8, h=7, unit="short", legend=None):
-    """One Grafana panel with one or more PromQL targets."""
+def panel(title, exprs, kind="timeseries", x=0, y=0, w=8, h=7, unit="short", legend=None, neutral=False):
+    """One Grafana panel with one or more PromQL targets.
+
+    neutral=True shows a stat in a fixed blue instead of Grafana's default red-above-80 threshold colouring,
+    which would make a plain count (e.g. predictions served) look like an alarm.
+    """
     _id[0] += 1
+    defaults = {"unit": unit}
+    if neutral:
+        defaults["color"] = {"mode": "fixed", "fixedColor": "blue"}
     return {"id": _id[0], "title": title, "type": kind, "datasource": DS,
             "gridPos": {"x": x, "y": y, "w": w, "h": h},
             "targets": [{"expr": e, "legendFormat": (legend[i] if legend else ""), "refId": chr(65 + i),
                          "datasource": DS} for i, e in enumerate(exprs)],
-            "fieldConfig": {"defaults": {"unit": unit}, "overrides": []}}
+            "fieldConfig": {"defaults": defaults, "overrides": []}}
 
 
 LAT = 'histogram_quantile({q}, sum(rate(airsense_http_request_seconds_bucket{{path="/predict"}}[1m])) by (le))'
 panels = [
     panel("Model loaded", ["airsense_model_loaded"], "stat", 0, 0, 4, 5),
-    panel("Requests / sec (backend)", ["sum(rate(airsense_http_requests_total[1m]))"], "stat", 4, 0, 5, 5, "reqps"),
+    panel("Requests / sec (backend)", ["sum(rate(airsense_http_requests_total[1m]))"], "stat", 4, 0, 5, 5, "reqps",
+          neutral=True),
     panel("Error rate (4xx+5xx share)",
-          ['sum(rate(airsense_http_requests_total{status=~"4..|5.."}[1m])) / '
+          ['(sum(rate(airsense_http_requests_total{status=~"4..|5.."}[1m])) or vector(0)) / '
            'clamp_min(sum(rate(airsense_http_requests_total[1m])),0.001)'], "stat", 9, 0, 5, 5, "percentunit"),
     panel("p95 /predict latency", [LAT.format(q=0.95)], "stat", 14, 0, 5, 5, "s"),
-    panel("Predictions served", ["sum(airsense_predictions_total)"], "stat", 19, 0, 5, 5),
+    panel("Predictions served", ["sum(airsense_predictions_total)"], "stat", 19, 0, 5, 5, neutral=True),
     panel("Request rate by endpoint", ["sum(rate(airsense_http_requests_total[1m])) by (path)"],
           "timeseries", 0, 5, 12, 8, "reqps", ["{{path}}"]),
     panel("Latency p50 / p95 / p99 (/predict)", [LAT.format(q=q) for q in (0.5, 0.95, 0.99)],

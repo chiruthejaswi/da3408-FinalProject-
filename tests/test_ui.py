@@ -109,3 +109,12 @@ def test_tc43_example_skips_unknown_city(mock_api):
     at = run_app()
     at.button[0].click().run()  # Aizawl is NOT in the mocked city list
     assert at.session_state["city"] in ["Chennai", "Delhi", "Mumbai"] and at.session_state["pm25"] == 12.0
+
+
+def test_tc57_sidebar_shows_no_debug_output(mock_api):
+    """The sidebar holds only header, navigation, status box and caption: no stray object dump (Streamlit 'magic')."""
+    at = run_app()
+    kinds = [type(e).__name__ for e in at.sidebar]
+    assert "Help" not in kinds and "UnknownElement" not in kinds
+    assert not any("DeltaGenerator" in str(getattr(e, "value", "")) for e in at.sidebar)
+    assert any(type(e).__name__ == "Success" and e.value == "Service online" for e in at.sidebar)

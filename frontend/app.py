@@ -22,7 +22,7 @@ READINGS = [
     ("O3", "o3", 1000.0, 1.0, "µg/m³", "Ground-level ozone.", "e.g. 35"),
 ]
 EXAMPLES = {
-    "🌿 Clean hill-town day": {"city": "Aizawl", "pm25": 12.0, "pm10": 28.0, "no2": 9.0, "so2": 4.0, "co": 0.3, "o3": 25.0},
+    "🌿 Clean-air day": {"city": "Bengaluru", "pm25": 12.0, "pm10": 28.0, "no2": 9.0, "so2": 4.0, "co": 0.3, "o3": 25.0},
     "🏙️ Typical metro day": {"city": "Mumbai", "pm25": 55.0, "pm10": 110.0, "no2": 38.0, "so2": 16.0, "co": 1.0, "o3": 35.0},
     "🌫️ Winter smog": {"city": "Delhi", "pm25": 260.0, "pm10": 420.0, "no2": 90.0, "so2": 20.0, "co": 3.5, "o3": 45.0},
 }
@@ -296,7 +296,10 @@ with st.sidebar:
     st.header("AirSense")
     choice = st.radio("Go to", list(PAGES), label_visibility="collapsed")
     try:
-        st.success("Service online") if api.health()["model_loaded"] else st.warning("Model not loaded")
+        if api.health()["model_loaded"]:
+            st.success("Service online")
+        else:
+            st.warning("Model not loaded")
     except (ApiUnavailable, ApiError):
         st.error("Service offline")
     st.caption("Estimates for information only - not an official CPCB AQI reading.")
