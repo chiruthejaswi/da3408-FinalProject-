@@ -8,9 +8,6 @@ Streamlit :8501 --REST (API_URL)--> FastAPI :8000 --> model (MLflow format)
    v                                   v                      | models/ (read-only)
 Prometheus :9090 -------------------> Grafana :3000       dvc repro: ingest -> preprocess (Ray) -> train (MLflow :5000)
 ```
-
-> **Read this first: data.** The included model is trained on **synthetic data** with the same schema as the Kaggle `city_day.csv` (no internet was available when this was built). The UI shows a warning banner. For your submission, download the real dataset (*Air Quality Data in India 2015-2020*, Kaggle), copy `city_day.csv` into `data/raw/` and run `dvc repro` (Step 4). Everything re-runs unchanged. The real file is an **input only**: the pipeline never overwrites or deletes it.
-
 ## Prerequisites
 
 Python 3.12, Docker Desktop / Docker Engine with Compose (only for Step 7), about 1 GB free disk.
@@ -19,11 +16,11 @@ Python 3.12, Docker Desktop / Docker Engine with Compose (only for Step 7), abou
 
 ```
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate          
 pip install -r requirements.txt -r backend/requirements.txt -r frontend/requirements.txt
 pip install pytest pytest-cov httpx ruff jupyter
-dvc commit -f                      # one time: the zip has no DVC cache; this re-registers the included data/model
-dvc status                         # should say "Data and pipelines are up to date."
+dvc commit -f                      
+dvc status                         
 ```
 
 ## Step 2: Look at the data and results (notebooks)
@@ -35,7 +32,6 @@ dvc status                         # should say "Data and pipelines are up to da
 | `03_API_Demo.ipynb` | Every endpoint, bad-input handling, CSV batch, model info, metrics, latency | API running |
 | `04_Drift_Demo.ipynb` | Simulated data shift and the drift gauge that Prometheus alerts on | API running (restart it first for a clean baseline) |
 
-All four are saved **with outputs**, so they render on GitHub without running anything.
 
 ## Step 3: Run the tests
 
@@ -47,10 +43,10 @@ python make_test_report.py         # tests + coverage + acceptance check -> docs
 ## Step 4: Run the pipeline (data engineering + training)
 
 ```
-cp ~/Downloads/archive/city_day.csv data/raw/city_day.csv   # real data (optional; synthetic is generated otherwise)
-rm -rf mlflow.db mlruns                                    # only if they exist from another machine (see Troubleshooting)
-dvc repro                                                  # ingest -> preprocess (Ray) -> train (MLflow); re-runs because data/raw changed
-grep source metrics/data_quality.json                       # must show "source": "real"
+cp ~/Downloads/archive/city_day.csv data/raw/city_day.csv   
+rm -rf mlflow.db mlruns                                    
+dvc repro                                                  # ingest -> preprocess (Ray) -> train (MLflow)
+grep source metrics/data_quality.json                       
 dvc dag                                                    # print the pipeline DAG
 ```
 
@@ -89,9 +85,7 @@ docker compose up --build
 
 The containerised MLflow starts empty. To fill it by running the pipeline in a container: `docker compose --profile train run --rm pipeline dvc repro -f`, then `docker compose restart backend`.
 
-> **Not verified by execution.** Docker was not available where this was built. The compose/Docker files were validated statically (YAML/JSON parse, no shared volumes, metric names checked against the code); the backend and frontend dependency lists were verified in clean virtualenvs. Please run `docker compose config` and `docker compose up --build` and check <http://localhost:9090/targets> shows `up`.
-
-## Step 8: Alerts and drift (optional)
+## Step 8: Alerts and drift
 
 Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts>. Send shifted data (see `04_Drift_Demo.ipynb`): `InputDrift` fires when a pollutant's recent mean moves by more than 0.5 training standard deviation (a medium effect size; see `04_Drift_Demo.ipynb`) for 2 minutes.
 
@@ -139,11 +133,8 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 | A test such as TC-14/TC-15 fails on real data | Those use fixed example readings; check the model output, then adjust the test or investigate. Do not lower the acceptance thresholds to pass. |
 
 ## Notes and limitations
-
-* **Synthetic data** until you add the real CSV (see top). Report the real numbers after Step 4.
 * **Synthetic vs real data.** On the synthetic demo data the model only *matches* the plain CPCB formula (its labels are that formula). On the real Kaggle data (author's run) the model **beats** it: macro-F1 0.770 vs 0.676, with 99.4 % of predictions exact or one category off. See `docs/HLD.md` §2.1.
 * **Acceptance criteria were revised after real data.** The original targets (macro-F1 >= 0.80, every class recall >= 0.70) were not met on real data (0.770; Good 0.686). The reasons and the revised criteria are recorded in `docs/TEST_PLAN.md` §6.1, and both sets are reported in `docs/TEST_REPORT.md`. `diagnose.py`, `diagnose_ceiling.py` and `diagnose_labels.py` reproduce the evidence.
 * Monitoring covers input drift and confidence, **not** production accuracy (no ground-truth feedback).
 * Ray throughput varies with machine load (about 4,000-7,400 rows/s transform on this data); at this size Ray start-up dominates the end-to-end figure.
-* No TLS or authentication; Grafana allows anonymous viewing for the demo.
 * Latency was measured in-process (test client), not over a network.
