@@ -58,3 +58,18 @@ Shows how the system is built and run: the pipeline diagram (green = last run OK
 - Results are **estimates for information**, not an official CPCB reading, and not medical advice.
 - Readings are used only to make the prediction; they are not tied to your identity.
 - Cities available are those the model was trained on (the dropdown lists them).
+
+
+## What you will see
+
+**The Predict page: pick a city, a date and at least two readings.**
+
+![The Predict page: pick a city, a date and at least two readings.](../screenshots/predict_page.png)
+
+**The result: a colour-coded category, how sure the model is, and advice for you.**
+
+![The result: a colour-coded category, how sure the model is, and advice for you.](../screenshots/predict_result.png)
+
+**The Pipeline page (for administrators): green means the last run succeeded.**
+
+![The Pipeline page (for administrators): green means the last run succeeded.](../screenshots/pipeline_dag.png)

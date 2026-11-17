@@ -10,7 +10,7 @@ Prometheus :9090 -------------------> Grafana :3000       dvc repro: ingest -> p
 ```
 ## Prerequisites
 
-Python 3.12, Docker Desktop / Docker Engine with Compose (only for Step 7), about 1 GB free disk.
+Python 3.12 (also worked on 3.14), about 1 GB free disk for the Python-only steps. Step 7 additionally needs Docker Desktop / Docker Engine with Compose and about **6 GB** free disk (images and build cache).
 
 ## Step 1: Python environment
 
@@ -36,7 +36,7 @@ dvc status
 ## Step 3: Run the tests
 
 ```
-python -m pytest                   # 69 tests
+python -m pytest                   # counts: see docs/TEST_REPORT.md
 python make_test_report.py         # tests + coverage + acceptance check -> docs/TEST_REPORT.md
 ```
 
@@ -100,7 +100,7 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 | `frontend/` | Streamlit: `app.py`, `api_client.py`, `ui_metrics.py`, `run.py`, `user_manual.md`, `Dockerfile` |
 | `docker-compose.yml`, `Dockerfile.pipeline`, `mlflow_server/` | Containers |
 | `prometheus.yml`, `alert_rules.yml`, `gen_dashboard.py`, `grafana/` | Monitoring (5 s scrape, 5 alert rules, 16-panel provisioned dashboard) |
-| `tests/` | 69 tests (61 distinct cases): unit, API, UI (Streamlit AppTest), acceptance |
+| `tests/` | Unit, API, UI (Streamlit AppTest) and acceptance tests (counts: `docs/TEST_REPORT.md`) |
 | `diagnose.py`, `diagnose_ceiling.py`, `diagnose_labels.py` | Read-only diagnostics: model vs formula, effect of extra pollutants, how the labels relate to the formula |
 | `make_test_report.py`, `make_diagram.py`, `ci.sh` | Test report generator, architecture diagram generator, local CI (`lint -> dvc repro -> tests`) |
 | `docs/` | Architecture diagram + explanation, HLD, LLD (endpoint specs), test plan, test report, user manual, DVC DAG |
@@ -128,7 +128,7 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 |---|---|
 | `"source": "synthetic"` after copying the CSV | The file is not at `data/raw/city_day.csv` (check the name and folder: run from the project root, so the destination is `data/raw/...`, not `AirSense/data/raw/...`). |
 | `PermissionError: '/home/...'` or *"MLflow experiment ... stores artifacts in ... outside this project"* from `train.py` | `mlflow.db` was created on another machine/folder and remembers absolute paths. `rm -rf mlflow.db mlruns` and re-run `dvc repro`; both are regenerated. |
-| `dvc status` says outputs are *not in cache* | `dvc commit -f` (the zip ships without DVC's cache). |
+| `dvc status` says outputs are *not in cache* | `dvc commit -f` (only when the data/model files are present, e.g. after unzipping a copy without DVC's cache). |
 | `ModuleNotFoundError: common` inside a Ray worker | Run `python preprocess.py` / `dvc repro` from the project root (workers are given the project path automatically). |
 | A test such as TC-14/TC-15 fails on real data | Those use fixed example readings; check the model output, then adjust the test or investigate. Do not lower the acceptance thresholds to pass. |
 
