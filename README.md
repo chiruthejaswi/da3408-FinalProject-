@@ -1,4 +1,7 @@
 # AirSense: Air Quality Index Prediction for Indian Cities
+Name : Chiruthejaswi 
+Roll No : DA24B036
+Video link : https://drive.google.com/file/d/1HX6XCuuyq7L1jvhXwMATJ3y1VMX1hfql/view?usp=sharing
 
 Streamlit UI + FastAPI backend that predicts the CPCB AQI category (**Good / Satisfactory / Moderate / Poor / Very Poor / Severe**) from pollutant readings (PM2.5, PM10, NO2, SO2, CO, O3), with a confidence score and health advice. Data engineering runs on Ray, the pipeline on DVC, experiments on MLflow, and the whole thing is monitored with Prometheus + Grafana.
 
@@ -121,16 +124,6 @@ Stop the backend for ~20 s: `BackendDown` fires at <http://localhost:9090/alerts
 | Experiment tracking beyond autolog | `train.py` (tags, val/test metrics, per-class recall, plots, importance, stats, data hash) |
 | Prometheus + Grafana, all components | `backend/metrics.py`, `frontend/ui_metrics.py`, `prometheus.yml`, `alert_rules.yml`, `grafana/` |
 | MLflow model, MLproject, FastAPI, Docker, Compose | `train.py`, `MLproject`, `backend/`, `docker-compose.yml` |
-
-## Troubleshooting
-
-| Symptom | Cause / fix |
-|---|---|
-| `"source": "synthetic"` after copying the CSV | The file is not at `data/raw/city_day.csv` (check the name and folder: run from the project root, so the destination is `data/raw/...`, not `AirSense/data/raw/...`). |
-| `PermissionError: '/home/...'` or *"MLflow experiment ... stores artifacts in ... outside this project"* from `train.py` | `mlflow.db` was created on another machine/folder and remembers absolute paths. `rm -rf mlflow.db mlruns` and re-run `dvc repro`; both are regenerated. |
-| `dvc status` says outputs are *not in cache* | `dvc commit -f` (only when the data/model files are present, e.g. after unzipping a copy without DVC's cache). |
-| `ModuleNotFoundError: common` inside a Ray worker | Run `python preprocess.py` / `dvc repro` from the project root (workers are given the project path automatically). |
-| A test such as TC-14/TC-15 fails on real data | Those use fixed example readings; check the model output, then adjust the test or investigate. Do not lower the acceptance thresholds to pass. |
 
 ## Notes and limitations
 * **Synthetic vs real data.** On the synthetic demo data the model only *matches* the plain CPCB formula (its labels are that formula). On the real Kaggle data (author's run) the model **beats** it: macro-F1 0.770 vs 0.676, with 99.4 % of predictions exact or one category off. See `docs/HLD.md` §2.1.
